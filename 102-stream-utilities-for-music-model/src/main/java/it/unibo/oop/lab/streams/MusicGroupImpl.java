@@ -41,7 +41,10 @@ public final class MusicGroupImpl implements MusicGroup {
 
     @Override
     public Stream<String> albumInYear(final int year) {
-        return this.albums.entrySet().stream().filter(a -> a.getValue() == year).map(a -> a.getKey());
+        return this.albums.entrySet()
+            .stream()
+            .filter(a -> a.getValue() == year)
+            .map(a -> a.getKey());
     }
 
     @Override
@@ -56,15 +59,18 @@ public final class MusicGroupImpl implements MusicGroup {
     @Override
     public int countSongsInNoAlbum() {
         return this.songs.stream()
-            .filter(a -> !a.getAlbumName()
-            .isPresent())
+            .filter(a -> !a.getAlbumName().isPresent())
             .toArray()
             .length;
     }
 
     @Override
     public OptionalDouble averageDurationOfSongs(final String albumName) {
-        return null;
+        return (OptionalDouble) this.songs.stream()
+            .filter(a -> a.getAlbumName().isPresent())
+            .filter(a -> a.getAlbumName().get().equals(albumName))
+            .mapToDouble(s -> s.getDuration())
+            .average();
     }
 
     @Override
