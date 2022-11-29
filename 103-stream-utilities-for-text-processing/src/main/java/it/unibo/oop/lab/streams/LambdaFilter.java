@@ -6,7 +6,10 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.awt.Toolkit;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
@@ -45,9 +48,14 @@ public final class LambdaFilter extends JFrame {
         COUNTLINES("Count lines", a -> Long.toString((a.lines().count()))),
         ORDER("List words in alphabetical order", a -> Stream.of(a.split(" "))
             .sorted()
-            .reduce((c, d) -> c + " " + d)
+            .reduce((c, d) -> c + "\n" + d)
             .get()),
-        COUNTWORD("Write the count for each word", Function.identity());
+        WORDCOUNT("Write the count for each word", a -> Stream.of(a.split(" "))
+            .collect(Collectors.groupingBy(b -> b, Collectors.counting()))
+            .entrySet().stream()
+            .sorted( (e1, e2) -> (int)(e1.getValue() - e2.getValue()))
+            .map(c -> c.getKey() + " -> " + c.getValue())
+            .collect(Collectors.joining("\n")));
 
 
         private final String commandName;
