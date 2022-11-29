@@ -6,8 +6,6 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.awt.Toolkit;
-import java.util.Arrays;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,6 +35,7 @@ import javax.swing.JTextArea;
 public final class LambdaFilter extends JFrame {
 
     private static final long serialVersionUID = 1760990730218643730L;
+    private static final String ANY_NON_WORD = "(\\s|\\p{Punct})+";
 
     private enum Command {
         /**
@@ -45,15 +44,15 @@ public final class LambdaFilter extends JFrame {
         IDENTITY("No modifications", Function.identity()),
         LOWERCASE("Convert to lowercase", String::toLowerCase),
         COUNTCHARS("Count chars", a -> Integer.toString(a.length())),
-        COUNTLINES("Count lines", a -> Long.toString((a.lines().count()))),
-        ORDER("List words in alphabetical order", a -> Stream.of(a.split(" "))
+        COUNTLINES("Count lines", a -> Long.toString(a.lines().count())),
+        ORDER("List words in alphabetical order", a -> Stream.of(a.split(ANY_NON_WORD))
             .sorted()
             .reduce((c, d) -> c + "\n" + d)
             .get()),
-        WORDCOUNT("Write the count for each word", a -> Stream.of(a.split(" "))
+        WORDCOUNT("Write the count for each word", a -> Stream.of(a.split(ANY_NON_WORD))
             .collect(Collectors.groupingBy(b -> b, Collectors.counting()))
             .entrySet().stream()
-            .sorted( (e1, e2) -> (int)(e1.getValue() - e2.getValue()))
+            .sorted((e1, e2) -> (int) (e1.getValue() - e2.getValue()))
             .map(c -> c.getKey() + " -> " + c.getValue())
             .collect(Collectors.joining("\n")));
 
