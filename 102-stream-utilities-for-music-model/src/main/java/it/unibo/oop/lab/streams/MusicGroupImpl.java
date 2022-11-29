@@ -91,8 +91,10 @@ public final class MusicGroupImpl implements MusicGroup {
             .filter(s -> s.getAlbumName().isPresent())
             .collect(Collectors.groupingBy(t -> t.getAlbumName() ,Collectors.summingDouble(Song::getDuration)))
             .entrySet().stream()
-            .collect(Collectors.maxBy(Comparator.comparingDouble(Entry::getValue)))
-            .flatMap(Entry::getKey);
+            .max((d1, d2) -> {
+                return Double.compare(d1.getValue(), d2.getValue());
+            })
+            .get().getKey();
     }
 
     private static final class Song {
